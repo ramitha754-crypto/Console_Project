@@ -1,0 +1,220 @@
+import java.io.*;
+import java.util.Scanner;
+
+public class BankingSystemFile {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        String fileName = "accounts.txt";
+        int choice;
+
+        do {
+            System.out.println("\n===== BANKING SYSTEM =====");
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit Money");
+            System.out.println("3. Withdraw Money");
+            System.out.println("4. Check Balance");
+            System.out.println("5. Exit");
+
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    try {
+                        System.out.print("Enter Account Number: ");
+                        int accountNumber = sc.nextInt();
+
+                        System.out.print("Enter Initial Balance: ");
+                        double balance = sc.nextDouble();
+
+                        BufferedWriter writer =
+                                new BufferedWriter(
+                                        new FileWriter(fileName, true));
+
+                        writer.write(accountNumber + "," + balance);
+                        writer.newLine();
+
+                        writer.close();
+
+                        System.out.println("Account created successfully!");
+
+                    } catch (IOException e) {
+                        System.out.println("Error while saving account!");
+                    }
+
+                    break;
+
+
+                case 2:
+                    System.out.print("Enter Account Number: ");
+                    int depositAccount = sc.nextInt();
+
+                    System.out.print("Enter Deposit Amount: ");
+                    double deposit = sc.nextDouble();
+
+                    updateBalance(fileName, depositAccount, deposit, true);
+
+                    break;
+
+
+                case 3:
+                    System.out.print("Enter Account Number: ");
+                    int withdrawAccount = sc.nextInt();
+
+                    System.out.print("Enter Withdrawal Amount: ");
+                    double withdraw = sc.nextDouble();
+
+                    updateBalance(fileName, withdrawAccount, withdraw, false);
+
+                    break;
+
+
+                case 4:
+                    try {
+
+                        System.out.print("Enter Account Number: ");
+                        int searchAccount = sc.nextInt();
+
+                        BufferedReader reader =
+                                new BufferedReader(
+                                        new FileReader(fileName));
+
+                        String line;
+                        boolean found = false;
+
+                        while ((line = reader.readLine()) != null) {
+
+                            String[] data = line.split(",");
+
+                            int accountNumber =
+                                    Integer.parseInt(data[0]);
+
+                            double balance =
+                                    Double.parseDouble(data[1]);
+
+                            if (accountNumber == searchAccount) {
+
+                                System.out.println(
+                                        "Current Balance: " + balance);
+
+                                found = true;
+                                break;
+                            }
+                        }
+
+                        reader.close();
+
+                        if (!found) {
+                            System.out.println("Account not found!");
+                        }
+
+                    } catch (IOException e) {
+                        System.out.println("Error while reading file!");
+                    }
+
+                    break;
+
+
+                case 5:
+                    System.out.println(
+                            "Thank you for using Banking System!");
+                    break;
+
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 5);
+
+        sc.close();
+    }
+
+
+    public static void updateBalance(
+            String fileName,
+            int targetAccount,
+            double amount,
+            boolean isDeposit) {
+
+        try {
+
+            BufferedReader reader =
+                    new BufferedReader(
+                            new FileReader(fileName));
+
+            BufferedWriter writer =
+                    new BufferedWriter(
+                            new FileWriter("temp.txt"));
+
+            String line;
+            boolean found = false;
+
+            while ((line = reader.readLine()) != null) {
+
+                String[] data = line.split(",");
+
+                int accountNumber =
+                        Integer.parseInt(data[0]);
+
+                double balance =
+                        Double.parseDouble(data[1]);
+
+                if (accountNumber == targetAccount) {
+
+                    found = true;
+
+                    if (isDeposit) {
+
+                        balance = balance + amount;
+
+                        System.out.println(
+                                "Deposit successful!");
+                        System.out.println(
+                                "Updated Balance: " + balance);
+
+                    } else {
+
+                        if (amount <= balance) {
+
+                            balance = balance - amount;
+
+                            System.out.println(
+                                    "Withdrawal successful!");
+                            System.out.println(
+                                    "Updated Balance: " + balance);
+
+                        } else {
+
+                            System.out.println(
+                                    "Insufficient balance!");
+                        }
+                    }
+                }
+
+                writer.write(accountNumber + "," + balance);
+                writer.newLine();
+            }
+
+            reader.close();
+            writer.close();
+
+            File originalFile = new File(fileName);
+            File tempFile = new File("temp.txt");
+
+            originalFile.delete();
+            tempFile.renameTo(originalFile);
+
+            if (!found) {
+                System.out.println("Account not found!");
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error while updating account!");
+        }
+    }
+}
