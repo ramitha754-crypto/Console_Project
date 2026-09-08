@@ -1,0 +1,127 @@
+import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.Map;
+
+public class BankingSystem {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        TreeMap<Integer, Double> accounts = new TreeMap<>();
+
+        int choice;
+
+        do {
+            System.out.println("\n===== BANKING SYSTEM =====");
+            System.out.println("1. Create Account");
+            System.out.println("2. Deposit Money");
+            System.out.println("3. Withdraw Money");
+            System.out.println("4. Check Balance");
+            System.out.println("5. View Sorted Accounts");
+            System.out.println("6. Exit");
+
+            System.out.print("Enter your choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+
+                case 1:
+                    System.out.print("Enter Account Number: ");
+                    int accountNumber = sc.nextInt();
+
+                    if (accounts.containsKey(accountNumber)) {
+                        System.out.println("Account already exists!");
+                    } else {
+                        System.out.print("Enter Initial Balance: ");
+                        double balance = sc.nextDouble();
+
+                        accounts.put(accountNumber, balance);
+                        System.out.println("Account created successfully!");
+                    }
+                    break;
+
+                case 2:
+                    System.out.print("Enter Account Number: ");
+                    accountNumber = sc.nextInt();
+
+                    if (accounts.containsKey(accountNumber)) {
+                        System.out.print("Enter Deposit Amount: ");
+                        double deposit = sc.nextDouble();
+
+                        balance = accounts.get(accountNumber);
+                        balance = balance + deposit;
+
+                        accounts.put(accountNumber, balance);
+
+                        System.out.println("Deposit successful!");
+                        System.out.println("Updated Balance: " + balance);
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Enter Account Number: ");
+                    accountNumber = sc.nextInt();
+
+                    if (accounts.containsKey(accountNumber)) {
+                        System.out.print("Enter Withdrawal Amount: ");
+                        double withdraw = sc.nextDouble();
+
+                        balance = accounts.get(accountNumber);
+
+                        if (withdraw <= balance) {
+                            balance = balance - withdraw;
+
+                            accounts.put(accountNumber, balance);
+
+                            System.out.println("Withdrawal successful!");
+                            System.out.println("Updated Balance: " + balance);
+                        } else {
+                            System.out.println("Insufficient balance!");
+                        }
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("Enter Account Number: ");
+                    accountNumber = sc.nextInt();
+
+                    if (accounts.containsKey(accountNumber)) {
+                        System.out.println("Current Balance: " +
+                                accounts.get(accountNumber));
+                    } else {
+                        System.out.println("Account not found!");
+                    }
+                    break;
+
+                case 5:
+                    System.out.println("\n===== SORTED ACCOUNT LEDGER =====");
+
+                    if (accounts.isEmpty()) {
+                        System.out.println("No accounts available!");
+                    } else {
+                        for (Map.Entry<Integer, Double> entry : accounts.entrySet()) {
+                            System.out.println(
+                                "Account Number: " + entry.getKey()
+                                + " | Balance: " + entry.getValue()
+                            );
+                        }
+                    }
+                    break;
+
+                case 6:
+                    System.out.println("Thank you for using Banking System!");
+                    break;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+
+        } while (choice != 6);
+
+        sc.close();
+    }
+}
